@@ -44,7 +44,7 @@ export default function Navbar() {
         <div className="absolute right-16 hidden md:flex space-x-4">
           {/* LinkedIn Icon */}
           <a
-            href="https://www.linkedin.com/in/YOUR_LINKEDIN_USERNAME"
+            href="https://www.linkedin.com/in/banda-sneethik-reddy-926244287/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-primary transition"
@@ -54,7 +54,7 @@ export default function Navbar() {
 
           {/* GitHub Icon */}
           <a
-            href="https://github.com/YOUR_GITHUB_USERNAME"
+            href="https://github.com/Sneethik"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-primary transition"
