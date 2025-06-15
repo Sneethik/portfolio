@@ -1,81 +1,99 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-// Import icons from react-icons
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaLinkedinIn, FaGithub } from 'react-icons/fa';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  const navLinks = ['home', 'about', 'resume', 'services', 'projects', 'contact'];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      setScrollProgress(progress);
+
+      const sections = navLinks.map(id => document.getElementById(id));
+      const current = sections.find(
+        section =>
+          section &&
+          section.offsetTop - 80 <= scrollTop &&
+          scrollTop < section.offsetTop + section.offsetHeight - 80
+      );
+      if (current) setActiveSection(current.id);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <nav className="fixed w-full bg-black bg-opacity-80 backdrop-blur-sm z-50">
+    <motion.nav
+      className="fixed w-full bg-black bg-opacity-80 backdrop-blur-sm z-50 shadow-md"
+      initial={{ y: -80 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
+      <motion.div
+        className="fixed top-0 left-0 h-1 bg-primary z-50"
+        style={{ width: `${scrollProgress}%` }}
+      />
+
       <div className="relative h-16 flex items-center justify-center">
-        {/* Logo at extreme left */}
         <motion.div
           className="absolute left-4 text-primary text-2xl font-bold"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
+          whileHover={{ rotateY: 10 }}
+          style={{ transformStyle: 'preserve-3d' }}
         >
           MyPortfolio
         </motion.div>
 
-        {/* Navigation Links (centered on larger screens) */}
-        <div className="hidden md:flex space-x-6">
-          <a href="#home" className="hover:text-primary transition">
-            Home
-          </a>
-          <a href="#about" className="hover:text-primary transition">
-            About
-          </a>
-          <a href="#resume" className="hover:text-primary transition">
-            Resume
-          </a>
-          <a href="#services" className="hover:text-primary transition">
-            Services
-          </a>
-          <a href="#projects" className="hover:text-primary transition">
-            Projects
-          </a>
-          <a href="#contact" className="hover:text-primary transition">
-            Contact
-          </a>
-        </div>
+        <motion.div className="hidden md:flex space-x-6">
+          {navLinks.map(link => (
+            <motion.a
+              key={link}
+              href={`#${link}`}
+              className={`capitalize transition tracking-wide ${
+                activeSection === link ? 'text-primary' : 'hover:text-primary'
+              }`}
+              whileHover={{ scale: 1.1, rotateZ: -1 }}
+            >
+              {link}
+            </motion.a>
+          ))}
+        </motion.div>
 
-        {/* Icons on the extreme right (desktop only) */}
         <div className="absolute right-16 hidden md:flex space-x-4">
-          {/* LinkedIn Icon */}
-          <a
+          <motion.a
             href="https://www.linkedin.com/in/banda-sneethik-reddy-926244287/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary transition"
+            className="hover:text-primary"
+            whileHover={{ scale: 1.2, rotate: 5 }}
           >
             <FaLinkedinIn size={20} />
-          </a>
-
-          {/* GitHub Icon */}
-          <a
+          </motion.a>
+          <motion.a
             href="https://github.com/Sneethik"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary transition"
+            className="hover:text-primary"
+            whileHover={{ scale: 1.2, rotate: -5 }}
           >
             <FaGithub size={20} />
-          </a>
+          </motion.a>
         </div>
 
-        {/* Mobile Menu Button (on the right) */}
         <div className="absolute right-4 md:hidden">
-          <button
-            className="text-white"
-            onClick={() => setOpen(!open)}
-          >
+          <button className="text-white" onClick={() => setOpen(!open)}>
             <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
               {open ? (
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M4 5h16v2H4V5zm0 12h16v2H4v-2z"
-                />
+                <path fillRule="evenodd" clipRule="evenodd" d="M4 5h16v2H4V5zm0 12h16v2H4v-2z" />
               ) : (
                 <path
                   fillRule="evenodd"
@@ -88,73 +106,50 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu (collapsible) */}
-      {open && (
-        <div className="md:hidden bg-black px-4 pb-4">
-          <a
-            href="#home"
-            className="block py-2 hover:text-primary"
-            onClick={() => setOpen(false)}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="md:hidden bg-black px-4 pb-6 pt-2"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            Home
-          </a>
-          <a
-            href="#about"
-            className="block py-2 hover:text-primary"
-            onClick={() => setOpen(false)}
-          >
-            About
-          </a>
-          <a
-            href="#resume"
-            className="block py-2 hover:text-primary"
-            onClick={() => setOpen(false)}
-          >
-            Resume
-          </a>
-          <a
-            href="#services"
-            className="block py-2 hover:text-primary"
-            onClick={() => setOpen(false)}
-          >
-            Services
-          </a>
-          <a
-            href="#projects"
-            className="block py-2 hover:text-primary"
-            onClick={() => setOpen(false)}
-          >
-            Projects
-          </a>
-          <a
-            href="#contact"
-            className="block py-2 hover:text-primary"
-            onClick={() => setOpen(false)}
-          >
-            Contact
-          </a>
+            {navLinks.map(link => (
+              <motion.a
+                key={link}
+                href={`#${link}`}
+                className="block py-2 hover:text-primary capitalize"
+                onClick={() => setOpen(false)}
+                whileTap={{ scale: 0.97 }}
+              >
+                {link}
+              </motion.a>
+            ))}
 
-          {/* Icons in mobile menu (optional) */}
-          <div className="flex space-x-4 pt-4">
-            <a
-              href="https://www.linkedin.com/in/banda-sneethik-reddy-926244287/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-primary transition"
-            >
-              <FaLinkedinIn size={20} />
-            </a>
-            <a
-              href="https://github.com/Sneethik"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-primary transition"
-            >
-              <FaGithub size={20} />
-            </a>
-          </div>
-        </div>
-      )}
-    </nav>
+            <div className="flex space-x-4 pt-4">
+              <motion.a
+                href="https://www.linkedin.com/in/banda-sneethik-reddy-926244287/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary"
+                whileHover={{ scale: 1.2 }}
+              >
+                <FaLinkedinIn size={20} />
+              </motion.a>
+              <motion.a
+                href="https://github.com/Sneethik"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary"
+                whileHover={{ scale: 1.2 }}
+              >
+                <FaGithub size={20} />
+              </motion.a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
 }
