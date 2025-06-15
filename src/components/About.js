@@ -7,7 +7,7 @@ export default function About() {
     <section id="about" className="min-h-screen px-8 py-16 bg-gradient-to-b from-black via-gray-900 to-black text-white">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-12">
         <motion.img
-          src="/assets/profile.jpg"
+          src="/assets/475A7463.jpg"
           alt="Profile"
           className="w-52 h-52 object-cover rounded-full border-4 border-primary shadow-xl"
           initial={{ opacity: 0, scale: 0.8 }}
